@@ -1,0 +1,31 @@
+model{
+	for(j in 1:J){ #Loop to create Linf and K for each color morph
+		L.inf[j]~dnorm(0,.001) #Asymptotic size
+		#Ks[j]~dunif(0,5)
+		#Kw[j]~dunif(0,5)
+		#Ks[j]<- B0s[j] + Bstemp[j]
+		#Kw[j]<- B0w[j] + Bwtemp[j]
+		B0s[j] ~ dnorm(0, 0.01)
+		B0w[j] ~ dnorm(0, 0.01)
+		Bstemp[j] ~ dnorm(0, 0.01)
+		Bwtemp[j] ~ dnorm(0, 0.01)
+	}
+	for(i in 1:n){ #Loop through each observation (time interval)
+			#Fabens mark-recapture formulation
+			Lr[i]~dnorm(Lr.hat[i], tau.Lr)
+			Lr.hat[i] <- Lm[i] + (L.inf[m[i]]-Lm[i])*(1-exp(-Ks[m[i]]*(dS[i]/365) + -Kw[m[i]]*(dW[i]/365)))
+			Ks[m[i]]<- B0s[m[i]] + Bstemp[m[i]]*temp[i]
+			Kw[m[i]]<- B0w[m[i]] + Bwtemp[m[i]]*temp[i]
+			
+			#Bstemp[i]<-Bts[m[i]]*temp[i]
+			#Bwtemp[i]<-Btw[m[i]]*temp[i]
+		}
+	
+	
+	#Priors 
+	tau.Lr <- pow(sigma.Lr,-2)
+	sigma.Lr ~ dunif(0,5)
+	
+	
+
+}

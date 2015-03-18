@@ -1,0 +1,22 @@
+
+
+> head(df)
+     STATE GEAR_CODE YEAR MONTH DAY TL_mm SEX ANNULI WHOLE_AGE FRAC_AGE YR_CL AGCY_LOC_CODE                      LOC_DESC
+1352    nc       214 2002    10   2   288   1     NA         1     1.75  2001               Pamlico Sound and Tributaries
+1354    nc       214 2002    11  19   302   1     NA         1     1.83  2001               Pamlico Sound and Tributaries
+1356    nc       214 2002     9  12   310   1     NA         1     1.67  2001               Pamlico Sound and Tributaries
+1359    nc       214 2002     8   9   319   1     NA         1     1.58  2001               Pamlico Sound and Tributaries
+1504    nc       214 2002     9  13   316   1     NA         2     2.67  2000               Pamlico Sound and Tributaries
+1516    nc       214 2002     7   2   335   1     NA         2     2.50  2000               Pamlico Sound and Tributaries
+     STUDY_BAY_NO LAT LONG length  age g
+1352          103  NA   NA    288 1.75 1
+1354          103  NA   NA    302 1.83 1
+1356          103  NA   NA    310 1.67 1
+1359          103  NA   NA    319 1.58 1
+1504          103  NA   NA    316 2.67 1
+1516          103  NA   NA    335 2.50 1
+
+
+# load data
+data <- list(y = df$length, age = df$age, g = df$g, n = dim(df)[1],
+             J = length(unique(df$STUDY_BAY_NO)), W=W  )

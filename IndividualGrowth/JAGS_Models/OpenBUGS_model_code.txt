@@ -1,0 +1,106 @@
+model{
+	# Von Bertalanffy Growth Model #
+	for(i in 1:41){  			# Individuals recaptured once #
+		for (j in 1:1){
+			h[i,j] ~ dnorm(H[i,j],tau.eps) #True head length, random variable with individual head length
+			H[i,j] ~ dgamma(P[i,j],lambda) #indv head length, rv of gamma process
+			P[i,j] <- lambda*H.m[i,j] #mean gamma process * head length of interval m
+			H.m[i,j] ~ dunif(0,100) #head length of interval m
+		}		
+		for (j in 2:2){
+			h[i,j] ~ dnorm(H[i,j],tau.eps)
+			H[i,j] <- H[i,j-1]+increment[i,j]
+			increment[i,j] ~ dgamma(P[i,j],lambda)
+			P[i,j] <- lambda*abs(H.m[i,j]-H.m[i,j-1])
+			H.m[i,j] <- H.m[i,j-1]+(a-H.m[i,j-1])*(1-exp(-k*dslc[i,j]/1000))
+		}
+	}
+	for(i in 42:46){  			# Individuals recaptured twice #
+		for (j in 1:1){
+			h[i,j] ~ dnorm(H[i,j],tau.eps)
+			H[i,j] ~ dgamma(P[i,j],lambda)
+			P[i,j] <- lambda*H.m[i,j]
+			H.m[i,j] ~ dunif(0,100)
+		}		
+		for (j in 2:3){
+			h[i,j] ~ dnorm(H[i,j],tau.eps)
+			H[i,j] <- H[i,j-1]+increment[i,j]
+			increment[i,j] ~ dgamma(P[i,j],lambda)
+			P[i,j] <- lambda*abs(H.m[i,j]-H.m[i,j-1])
+			H.m[i,j] <- H.m[i,j-1]+(a-H.m[i,j-1])*(1-exp(-k*dslc[i,j]/1000))
+		}
+	}
+	
+	# Priors and Derived Parameters for Recapture Data #
+	loglambda ~ dnorm(0,1.0E-6)
+	log(lambda) <- loglambda
+	SdOverRootmean <- 1/sqrt(lambda)
+	
+	logk ~ dnorm(0,1.0E-6)
+	log(k) <- logk
+
+	loga ~ dnorm(0.0,1.0E-6)
+	log(a) <- loga
+
+	tau.eps ~ dgamma(0.001,0.001)
+	sd.eps <- 1/sqrt(tau.eps)
+
+	#  Head, Tail vs. Age for Young #
+	for (i in 1:51){
+		mu.HL[i] <- alpha.HL+beta.HL*DaysOld[i]
+		HL[i] ~ dnorm(mu.HL[i],tau.HL)
+		mu.TL[i] <- alpha.TL+beta.TL*mu.HL[i]
+		TL[i] ~ dnorm(mu.TL[i],tau.TL)
+		DaysOld[i] ~ dunif(0,100)
+	}
+
+	# Priors and Derived Parameters for Young #
+	alpha.HL ~ dnorm(0.0,1.0E-4)
+	beta.HL ~ dnorm(0.0,1.0E-4)
+	alpha.TL ~ dnorm(0.0,1.0E-4)
+	beta.TL ~ dnorm(0.0,1.0E-4)
+	tau.HL ~ dgamma(0.001,0.001)
+	sd.HL <- 1/sqrt(tau.HL)
+	tau.TL ~  dgamma(0.001,0.001)
+	sd.TL <- 1/sqrt(tau.TL)
+	
+	# Age prediction section #
+	# Note that BabyHead is prediction for an age zero individual #
+	# Similarly A will be a prediction of asymptotic size for a new individual #
+	# Combining these, obtain prediction of Von Bertalanffy parameter "B" #
+	# We also derive the expected size of 1- and 2-year-old crocodiles
+
+	alpha.HL.cut <- cut(alpha.HL)
+	alpha.TL.cut <- cut(alpha.TL)
+	beta.TL.cut <- cut(beta.TL)
+	a.cut <- cut(a)
+	tau.eps.cut <- cut(tau.eps)
+	tau.TL.cut <- cut(tau.TL)
+	tau.HL.cut <- cut(tau.HL)
+	k.cut <- cut(k)
+	lambda.cut <- cut(lambda)
+	
+	mu.BabyHead <- alpha.HL.cut + 0
+		
+	BabyHead ~ dnorm(mu.BabyHead,tau.HL.cut)
+	A <- a.cut
+	B <- 1-BabyHead/A
+	for (j in 4:50){
+		BabyHead.h[j] ~ dnorm(mu.BabyHead,tau.HL.cut)
+		B.h[j] <- 1-BabyHead.h[j]/A
+		head[j] <- (j/2) 
+		head[j] ~ dnorm(Head[j],tau.eps.cut)
+		Head[j] ~ dgamma(PP[j],lambda.cut)
+		PP[j] <- lambda.cut*EHead[j]
+		EHead[j] <- abs(A*(1-B.h[j]*exp(-k.cut*Age[j])))
+		Age[j] ~ dunif(0,250)
+	}
+	
+	# Size of 1 and 2 year old #
+	ES[1] <- A*(1-B*exp(-k.cut*365.25/1000))
+	ES[2] <- A*(1-B*exp(-k.cut*2*365.25/1000))
+	PS[1] <- lambda.cut*ES[1]
+	PS[2] <- lambda.cut*ES[2]
+	S[1] ~ dgamma(PS[1],lambda.cut)
+	S[2] ~ dgamma(PS[2],lambda.cut)
+}

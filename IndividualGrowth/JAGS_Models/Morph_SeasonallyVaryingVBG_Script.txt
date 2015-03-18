@@ -1,0 +1,21 @@
+model{
+    for(i in 1:n){
+	  	#Fabens mark-recapture formulation
+		Lr[i]~dnorm(Lr.hat[i], tau.Lr)
+		Lr.hat[i] <- Lm[i] + (L.inf[m[i]]-Lm[i])*(1-exp(-Ks[m[i]]*(dS[i]/365) + -Kw[m[i]]*(dW[i]/365)))
+    
+	}
+	for(j in 1:J){
+		L.inf[j]~dnorm(0,.001)
+		Ks[j]~dunif(0,5)
+		Kw[j]~dunif(0,5)
+	}
+    #Priors 
+    tau.Lr <- pow(sigma.Lr,-2)
+    sigma.Lr ~ dunif(0,5)
+    
+	#sigma.mLr ~ dunif(0,5)
+	#tau.mLr <- pow(sigma.mLr,-2)
+	#sigma.K ~ dunif(0,10)
+	#tau.K <- pow(sigma.K,-2)
+}
