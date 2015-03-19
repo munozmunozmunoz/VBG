@@ -35,7 +35,7 @@ nc <- 2
 start.time = Sys.time()         # Set timer
 
 out <- jags(data = data, inits = inits, parameters.to.save = params1, 
-            model.file = "JAGS_Models/Morph_SeasonallyVaryingVBG_Temp_Script.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
+            model.file = "C:/Users/djm516.ACCESS/Documents/GitHub/VBG/IndividualGrowth/JAGS_Models/Morph_SeasonallyVaryingVBG_Temp_Script.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
             n.burnin = nb)
 
 end.time = Sys.time()
