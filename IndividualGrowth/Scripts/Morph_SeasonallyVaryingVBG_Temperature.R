@@ -26,9 +26,9 @@ params1 <- c("L.inf", "B0s", "B0w", "Bts", "Btw", "sigma.Lr","tau.Lr")
 
 
 # MCMC settings
-ni <- 2000
+ni <- 4000
 nt <- 1
-nb <- 500
+nb <- 100
 nc <- 3
 
 

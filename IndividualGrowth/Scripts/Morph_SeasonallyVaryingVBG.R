@@ -3,8 +3,8 @@
 ##############################
 
 setwd("Z://IndividualGrowth")
-setwd("Z:/depts/ag_apel/IndividualGrowth")
-dat<-read.csv("VBG_TimeInterval_SeasonalDaysDuration.csv")
+setwd("Z:/depts/ag_apel/IndividualGrowth_BecauseImSpecial")
+dat<-read.csv("Data/VBG_TimeInterval_SeasonalDaysDuration.csv")
 
 str(dat)
 library(R2jags)
@@ -33,7 +33,7 @@ nc <- 2
 start.time = Sys.time()         # Set timer
 
 out <- jags(data = data, inits = inits, parameters.to.save = params1, 
-            model.file = "Morph_SeasonallyVaryingVBG_Script.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
+            model.file = "JAGS_Models/Morph_SeasonallyVaryingVBG_Script.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
             n.burnin = nb)
 
 end.time = Sys.time()
