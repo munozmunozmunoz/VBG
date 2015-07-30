@@ -3,7 +3,9 @@
 #################################
 setwd("E:/Current/New or Updated Files/PennState/Research/CMH/IndividualGrowth")
 temp<-read.csv("Data/4SeasonTemp.csv")
+temp<-temp[,-1]
 dat<-read.csv("Data/VBG_4SeasonDiffTemp.csv")
+#############Summer days vector approach
 #Day 0 to day 1307 (1308 total days)
 summerdays<-vector("numeric", length=1308)
 winterdays<-vector("numeric", length=1308)
@@ -21,27 +23,29 @@ winterdays[51:143]<-1
 springdays[144:200]<-1
 summerdays[201:325]<-1
 falldays[326:399]<-1
-winterdays[400:501]<-1
-springdays[502:560]<-1
+winterdays[400:502]<-1
+springdays[503:560]<-1
 summerdays[561:718]<-1
 falldays[719:763]<-1
 winterdays[764:872]<-1
 springdays[873:929]<-1
 summerdays[930:1071]<-1
-falldays[1072:1132]<-1
-winterdays[1133:1268]<-1
-springdays[1269:1308]<-1
+falldays[1072:1131]<-1
+winterdays[1132:1267]<-1
+springdays[1268:1308]<-1
 
 #For each record, create number of summer days and number of winters days
 for(i in 1:dim(dat)[1]){
-  dat$dSp[i]<-sum(springdays[dat$Days[i]:dat$Days.1[i]])
-  dat$dSm[i]<-sum(summerdays[dat$Days[i]:dat$Days.1[i]])
-  dat$dF[i]<-sum(falldays[dat$Days[i]:dat$Days.1[i]])
-  dat$dW[i]<-sum(winterdays[dat$Days[i]:dat$Days.1[i]])  
-
+  dat$dSp[i]<-sum(springdays[(dat$Days[i]+1):(dat$Days.1[i]+1)])
+  dat$dSm[i]<-sum(summerdays[(dat$Days[i]+1):(dat$Days.1[i]+1)])
+  dat$dF[i]<-sum(falldays[(dat$Days[i]+1):(dat$Days.1[i]+1)])
+  dat$dW[i]<-sum(winterdays[(dat$Days[i]+1):(dat$Days.1[i]+1)])
 }
-#Combine summer day indicator with data frame
-temp1<-cbind(temp, summerdays)
+#Individuals caught on first day of season don't experience that season's growth
+dat$dSp[which(dat$dSp==1)]<-0
+dat$dF[which(dat$dF==1)]<-0
+
+dat<-droplevels(dat)
 
 #Standardize each winter and summer(single value for all W/Sm days)
 sm1<-mean(temp[201:325,7], na.rm=T)
@@ -67,9 +71,6 @@ temp$StdW[1132:1267]<-StdW[4]
 temp$StdSp<-scale(as.numeric(temp$TempSp), center=TRUE, scale=TRUE)
 temp$StdF<-scale(as.numeric(temp$TempF), center=TRUE, scale=TRUE)
 
-
-write.csv(temp, file="Data/Temp4Growth.csv")
-
 ###### Add mean temperature to time intervals
 str(dat)
 #For each record, take mean of temp of each season between two days
@@ -79,5 +80,12 @@ for(i in 1:dim(dat)[1]){
   dat$TempF[i]<-mean(temp$StdF[dat$Days[i]:dat$Days.1[i]], na.rm=T)
   dat$TempW[i]<-mean(temp$StdW[dat$Days[i]:dat$Days.1[i]], na.rm=T)  
 }
+#Change NAs to zeroes so BUGS doesn't explode
+dat$TempSp[which(dat$TempSp=="NaN")]<-0
+dat$TempSm[which(dat$TempSm=="NaN")]<-0
+dat$TempF[which(dat$TempF=="NaN")]<-0
+dat$TempW[which(dat$TempW=="NaN")]<-0
+
+#Write new data files
 write.csv(dat, file="Data/VBG_4SeasonDiffTemp.csv")
 write.csv(temp, file="Data/4SeasonTemp.csv")
