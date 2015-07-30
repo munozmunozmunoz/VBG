@@ -18,8 +18,8 @@ data <- list(Lr=dat$SVL.1, Lm = dat$SVL, dSp = dat$dSp, dSm = dat$dSm,
 inits <- function(){list(L.inf = rnorm(2,0,0.001), K = rnorm(4,1,0.001))}
 
 # Parameters monitored
-params1 <- c("L.inf", "Ksp", "Ksm","Kf","Kw", "sigma.Lr","tau.Lr"
-             "B0sp", "Btsp","B0sm", "Btsm","B0f", "Btf","B0w", "Btw",)
+params1 <- c("L.inf", "Ksp", "Ksm","Kf","Kw", "sigma.Lr","tau.Lr",
+             "B0sp", "Btsp","B0sm", "Btsm","B0f", "Btf","B0w", "Btw")
 
 
 # MCMC settings
