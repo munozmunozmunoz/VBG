@@ -2,7 +2,7 @@ model{
 	for(i in 1:n){
 		#Fabens mark-recapture formulation
 		Lr[i]~dnorm(Lr.hat[i], tau.Lr)
-		Lr.hat[i] <- Lm[i] + (L.inf[m[i]]-Lm[i])*(1-exp(-Ksp[m[i]]*(dSp[i]/365) + -Ksm[m[i]]*(dSm[i]/365) + -Kf[m[i]]*(dF[i]/365) + -Kw[m[i]]*(dW[i]/365)))
+		Lr.hat[i] <- Lm[i] + (L.inf[m[i]]-Lm[i])*(1-exp(-Ksp[i]*(dSp[i]/365) + -Ksm[i]*(dSm[i]/365) + -Kf[i]*(dF[i]/365) + -Kw[i]*(dW[i]/365)))
 		log(Ksp[i]) <- B0sp[m[i]] + Btsp[m[i]]*tempSp[i]
 		log(Kw[i]) <- B0w[m[i]] + Btw[m[i]]*tempW[i]
 		log(Ksm[i]) <- B0sm[m[i]] + Btsm[m[i]]*tempSm[i]
