@@ -87,5 +87,6 @@ dat$TempF[which(dat$TempF=="NaN")]<-0
 dat$TempW[which(dat$TempW=="NaN")]<-0
 
 #Write new data files
+dat<-dat[,c(-1,-2,-9,-10)]
 write.csv(dat, file="Data/VBG_4SeasonDiffTemp.csv")
-write.csv(temp, file="Data/4SeasonTemp.csv")
+#write.csv(temp, file="Data/4SeasonTemp.csv")
