@@ -2,30 +2,29 @@
 ### Von Bertalanffy Growth ###
 ##############################
 
-setwd("Z://IndividualGrowth")
-setwd("Z:/depts/ag_apel/IndividualGrowth_BecauseImSpecial")
-dat<-read.csv("Data/VBG_TimeInterval_SeasonalDaysDuration.csv")
+dat<-read.csv("Data/VBG_4SeasonDiff.csv")
 
 str(dat)
 library(R2jags)
 
 # load data
-data <- list(Lr=dat$SVL.1, Lm = dat$SVL, dS = dat$dS, dW = dat$dW, n = dim(dat)[1],
+data <- list(Lr=dat$SVL.1, Lm = dat$SVL, dSp = dat$dSp, dSm = dat$dSm,
+             dW = dat$dW, dF= dat$dF, n = dim(dat)[1],
              m=as.numeric(dat$Color), J=length(unique(dat$Color)))
 
 
 # Initial values
-inits <- function(){list(L.inf = rnorm(2,0,0.001), K = rnorm(2,1,0.001))}
+inits <- function(){list(L.inf = rnorm(2,0,0.001))}
 
 # Parameters monitored
-params1 <- c("L.inf", "Ks", "Kw", "sigma.Lr","tau.Lr")
+params1 <- c("L.inf", "Ksp", "Ksm","Kf","Kw", "sigma.Lr","tau.Lr")
 
 
 # MCMC settings
-ni <- 4000
+ni <- 5000
 nt <- 1
 nb <- 1000
-nc <- 2
+nc <- 3
 
 
 ############################################
@@ -33,12 +32,14 @@ nc <- 2
 start.time = Sys.time()         # Set timer
 
 out <- jags(data = data, inits = inits, parameters.to.save = params1, 
-            model.file = "JAGS_Models/Morph_SeasonallyVaryingVBG_Script.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
+            model.file = "Models/Morph_4SeasonsDiff.txt", n.chains = nc, n.thin = nt, n.iter = ni, 
             n.burnin = nb)
 
 end.time = Sys.time()
 elapsed.time = round(difftime(end.time, start.time, units='mins'), dig = 2)
 cat('Posterior computed in ', elapsed.time, ' minutes\n\n', sep='') 
+
+save(out, file="Results/4SeasonDiff.RData")
 # Calculate computation time
 
 
