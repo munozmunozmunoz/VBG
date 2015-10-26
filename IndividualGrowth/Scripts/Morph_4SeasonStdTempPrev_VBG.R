@@ -2,7 +2,7 @@
 ### Von Bertalanffy Growth ###
 ##############################
 
-dat<-read.csv("Data/VBG_4SeasonStdTemp.csv")
+dat<-read.csv("Data/VBG_4SeasonStdTemp_Prev.csv")
 
 str(dat)
 library(R2jags)
@@ -41,7 +41,7 @@ end.time = Sys.time()
 elapsed.time = round(difftime(end.time, start.time, units='mins'), dig = 2)
 cat('Posterior computed in ', elapsed.time, ' minutes\n\n', sep='') 
 
-save(out, file="Results/4SeasonStdTemp_All4.RData")
+save(out, file="Results/4SeasonStdTemp_Prev.RData")
 # Calculate computation time
 
 
