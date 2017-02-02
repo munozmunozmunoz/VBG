@@ -3,7 +3,7 @@
     for(i in 1:n){
       #Fabens mark-recapture formulation
       Lr[i]~dnorm(Lr.hat[i], tau.Lr)
-      #Without epsilon, growth coefficient K is zero
+      #Must include tau.Lr as error, otherwise growth coefficient K is zero
       Lr.hat[i] <- Lm[i] + (L.inf-Lm[i])*(1-exp(-K*(dT[i]/365))) 
     }
     #Priors 
