@@ -1,0 +1,25 @@
+model{
+	#Priors 
+	for(j in 1:J){
+		L.inf[j] ~ dnorm(0,.001)
+		B0sp[j] ~ dnorm(0, 0.01)
+		Btsp[j] ~ dnorm(0, 0.01)
+		B0sm[j] ~ dnorm(0, 0.01)
+		Btsm[j] ~ dnorm(0, 0.01)
+		B0f[j] ~ dnorm(0, 0.01)
+		Btf[j] ~ dnorm(0, 0.01)
+		B0w[j] ~ dnorm(0, 0.01)
+		Btw[j] ~ dnorm(0, 0.01)
+		Ksp[j]~dunif(0,5)
+		Kf[j]~dunif(0,5)
+	}
+	tau.Lr <- pow(sigma.Lr,-2)
+	sigma.Lr ~ dunif(0,5)
+	#Model Fabens mark-recapture formulation
+	for(i in 1:n){
+		Lr[i] ~ dnorm(Lr.hat[i], tau.Lr)
+		Lr.hat[i] <- Lm[i] + (L.inf[m[i]]-Lm[i])*(1-exp(-Ksp[m[i]]*(dSp[i]/365) + -Ksm[i]*(dSm[i]/365) + -Kf[m[i]]*(dF[i]/365) + -Kw[i]*(dW[i]/365)))
+		log(Ksm[i]) <- B0sm[m[i]] + Btsm[m[i]]*tempSm[i]
+		log(Kw[i]) <- B0w[m[i]] + Btw[m[i]]*tempW[i]
+	}
+}
